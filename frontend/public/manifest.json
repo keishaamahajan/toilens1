@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "ToiLens",
+  "version": "1.0.0",
+  "description": "Campus location and route viewer powered by the local ToiLens API.",
+  "action": { "default_title": "Open ToiLens", "default_popup": "index.html" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "host_permissions": ["http://localhost:8000/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.tile.openstreetmap.org https://unpkg.com; img-src 'self' data: https://*.tile.openstreetmap.org https://unpkg.com"
+  }
+}
