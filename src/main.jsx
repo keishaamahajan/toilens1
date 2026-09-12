@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Link, Route, Routes, useNavigate } from 'react-router-dom';
 import { Activity, AlertTriangle, ArrowRight, BarChart3, Camera, CheckCircle2, ChevronRight, CircleAlert, ClipboardCheck, Clock3, Droplets, FileText, Footprints, Gauge, LayoutDashboard, Map, MapPin, Menu, Navigation, Search, ShieldCheck, Sparkles, Star, Toilet, Users, Wrench, X } from 'lucide-react';
@@ -37,7 +40,253 @@ function FootfallChart({toilet}) { const values=[35,48,39,58,70,84,62];return <s
 function THIChart({toilet}) { const pts=`0,82 38,68 75,74 112,50 150,${100-toilet.thiScore} 190,45 230,38`;return <section className="chart-card"><div className="section-head"><div><h3>Health trend</h3><p>Last 6 hours</p></div><StatusBadge score={toilet.thiScore}/></div><svg viewBox="0 0 230 100" preserveAspectRatio="none"><polyline points={pts}/><line x1="0" y1="72" x2="230" y2="72"/></svg><div className="chart-labels"><span>6h ago</span><span>Now</span></div></section> }
 function Button({children,variant='primary',...props}) { return <button className={`button ${variant}`} {...props}>{children}</button> }
 function Tabs({active,setActive}) {return <div className="tabs">{['Nearby','All toilets'].map(x=><button key={x} onClick={()=>setActive(x)} className={active===x?'active':''}>{x}</button>)}</div>}
-function CampusMap({authority=false}){const {data}=useApp();const nav=useNavigate();const [buildingId,setBuildingId]=useState();const [floor,setFloor]=useState('all');const [query,setQuery]=useState('');const [cleanest,setCleanest]=useState(false);const building=campusBuildings.find(b=>b.id===buildingId);const toiletsForBuilding=data.filter(t=>t.buildingId===buildingId&&(floor==='all'||t.floor===+floor));const bounds={minLat:12.9687,maxLat:12.9726,minLng:79.1545,maxLng:79.1674};const pos=(lat,lng)=>({left:`${(lng-bounds.minLng)/(bounds.maxLng-bounds.minLng)*100}%`,top:`${100-(lat-bounds.minLat)/(bounds.maxLat-bounds.minLat)*100}%`});const best=[...data].sort((a,b)=>b.thiScore-a.thiScore||a.complaints-b.complaints)[0];const find=()=>{const q=query.toLowerCase();const t=data.find(x=>x.name.toLowerCase().includes(q)||`floor ${x.floor} toilet ${x.toiletNumber}`.includes(q));const b=campusBuildings.find(x=>x.name.toLowerCase().includes(q));if(t||b){setBuildingId(t?.buildingId||b.id);setFloor('all')}};return <section className="campus-map-shell"><div className="campus-map-toolbar"><label>DATA SOURCE<select defaultValue="Campus Data"><option>Demo Data</option><option>Campus Data</option></select></label><b>Campus Data • VIT Vellore • Prototype</b><div><input value={query}onChange={e=>setQuery(e.target.value)}onKeyDown={e=>e.key==='Enter'&&find()}placeholder="Search campus building or toilet…"/><button onClick={find}><Search size={15}/></button></div></div><p className="map-prototype-note">18 mapped buildings · 2 toilets / floor · Toilet locations are estimated for MVP demonstration.</p><div className="campus-map">{campusBuildings.map(b=><button key={b.id}style={pos(b.latitude,b.longitude)}onClick={()=>{setBuildingId(b.id);setFloor('all')}}className={'campus-building '+(buildingId===b.id?'selected':'')}><MapPin/><span>{b.name}</span></button>)}{toiletsForBuilding.map(t=><button key={t.id}style={pos(t.latitude,t.longitude)}className={'campus-toilet '+status(t.thiScore)}onClick={()=>nav(authority?`/authority/toilet/${t.id}`:`/toilet/${t.id}`)} title={`Floor ${t.floor} · Toilet ${t.toiletNumber} · THI ${t.thiScore}`}/>) }<div className="map-legend"><span><i className="legend-good"/> Good</span><span><i className="legend-watch"/> Needs attention</span><span><i className="legend-alert"/> Cleaning required</span></div></div><button className="cleanest"onClick={()=>setCleanest(!cleanest)}><Sparkles size={15}/>Cleanest nearby</button>{cleanest&&<div className="best-campus"><small>BEST AVAILABLE</small><strong>{best.buildingName}</strong><span>Floor {best.floor} · Toilet {best.toiletNumber} · THI {best.thiScore}</span><button onClick={()=>nav(authority?`/authority/toilet/${best.id}`:`/toilet/${best.id}`)}>View</button></div>}{building&&<aside className="campus-building-card"><h3>{building.name}</h3><p>{building.floors} floors · {building.floors*2} prototype toilets</p><p>Average THI: {Math.round(data.filter(t=>t.buildingId===building.id).reduce((s,t)=>s+t.thiScore,0)/(building.floors*2))}</p><label>Floor <select value={floor}onChange={e=>setFloor(e.target.value)}><option value="all">All Floors</option>{Array.from({length:building.floors},(_,i)=><option key={i}value={i+1}>Floor {i+1}</option>)}</select></label><div>{toiletsForBuilding.map(t=><button key={t.id}onClick={()=>nav(authority?`/authority/toilet/${t.id}`:`/toilet/${t.id}`)}><StatusBadge score={t.thiScore}/> Floor {t.floor} · Toilet {t.toiletNumber}</button>)}</div></aside>}</section>}
+function CampusMap({authority=false}){
+  const {data}=useApp();
+  const nav=useNavigate();
+
+  const [buildingId,setBuildingId]=useState();
+  const [floor,setFloor]=useState('all');
+  const [query,setQuery]=useState('');
+  const [cleanest,setCleanest]=useState(false);
+
+  const building=campusBuildings.find(b=>b.id===buildingId);
+
+  const toiletsForBuilding=data.filter(
+    t=>t.buildingId===buildingId &&
+    (floor==='all'||t.floor===+floor)
+  );
+
+  const best=[...data].sort(
+    (a,b)=>b.thiScore-a.thiScore||a.complaints-b.complaints
+  )[0];
+
+  const find=()=>{
+    const q=query.toLowerCase();
+
+    const t=data.find(
+      x=>x.name.toLowerCase().includes(q)||
+      `floor ${x.floor} toilet ${x.toiletNumber}`.includes(q)
+    );
+
+    const b=campusBuildings.find(
+      x=>x.name.toLowerCase().includes(q)
+    );
+
+    if(t||b){
+      setBuildingId(t?.buildingId||b.id);
+      setFloor('all');
+    }
+  };
+
+  const buildingIcon=L.divIcon({
+    className:'custom-building-marker',
+    html:'<div>📍</div>',
+    iconSize:[30,30],
+    iconAnchor:[15,30]
+  });
+
+  const toiletIcon=(score)=>L.divIcon({
+    className:'custom-toilet-marker',
+    html:`<div class="toilet-marker ${status(score)}"></div>`,
+    iconSize:[16,16],
+    iconAnchor:[8,8]
+  });
+
+  return (
+    <section className="campus-map-shell">
+
+      <div className="campus-map-toolbar">
+        <label>
+          DATA SOURCE
+          <select defaultValue="Campus Data">
+            <option>Demo Data</option>
+            <option>Campus Data</option>
+          </select>
+        </label>
+
+        <b>Campus Data • VIT Vellore • Prototype</b>
+
+        <div>
+          <input
+            value={query}
+            onChange={e=>setQuery(e.target.value)}
+            onKeyDown={e=>e.key==='Enter'&&find()}
+            placeholder="Search campus building or toilet…"
+          />
+          <button onClick={find}>
+            <Search size={15}/>
+          </button>
+        </div>
+      </div>
+
+      <p className="map-prototype-note">
+        18 mapped buildings · 2 toilets / floor · Toilet locations are estimated for MVP demonstration.
+      </p>
+
+      <div className="campus-map">
+
+        <MapContainer
+          center={[12.9707,79.1613]}
+          zoom={16}
+          scrollWheelZoom={true}
+          style={{height:'100%',width:'100%'}}
+        >
+
+          <TileLayer
+            attribution='&copy; OpenStreetMap contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {campusBuildings.map(b=>(
+            <Marker
+              key={b.id}
+              position={[b.latitude,b.longitude]}
+              icon={buildingIcon}
+              eventHandlers={{
+                click:()=>{
+                  setBuildingId(b.id);
+                  setFloor('all');
+                }
+              }}
+            >
+              <Popup>
+                <strong>{b.name}</strong>
+                <br/>
+                {b.floors} floors
+                <br/>
+                {b.floors*2} prototype toilets
+              </Popup>
+            </Marker>
+          ))}
+
+          {toiletsForBuilding.map(t=>(
+            <Marker
+              key={t.id}
+              position={[t.latitude,t.longitude]}
+              icon={toiletIcon(t.thiScore)}
+              eventHandlers={{
+                click:()=>{
+                  nav(
+                    authority
+                    ? `/authority/toilet/${t.id}`
+                    : `/toilet/${t.id}`
+                  );
+                }
+              }}
+            >
+              <Popup>
+                Floor {t.floor} · Toilet {t.toiletNumber}
+                <br/>
+                THI: {t.thiScore}
+              </Popup>
+            </Marker>
+          ))}
+
+        </MapContainer>
+
+        <div className="map-legend">
+          <span>
+            <i className="legend-good"/> Good
+          </span>
+          <span>
+            <i className="legend-watch"/> Needs attention
+          </span>
+          <span>
+            <i className="legend-alert"/> Cleaning required
+          </span>
+        </div>
+
+      </div>
+
+      <button
+        className="cleanest"
+        onClick={()=>setCleanest(!cleanest)}
+      >
+        <Sparkles size={15}/>
+        Cleanest nearby
+      </button>
+
+      {cleanest&&(
+        <div className="best-campus">
+          <small>BEST AVAILABLE</small>
+          <strong>{best.buildingName}</strong>
+          <span>
+            Floor {best.floor} · Toilet {best.toiletNumber} · THI {best.thiScore}
+          </span>
+          <button
+            onClick={()=>nav(
+              authority
+              ? `/authority/toilet/${best.id}`
+              : `/toilet/${best.id}`
+            )}
+          >
+            View
+          </button>
+        </div>
+      )}
+
+      {building&&(
+        <aside className="campus-building-card">
+
+          <h3>{building.name}</h3>
+
+          <p>
+            {building.floors} floors · {building.floors*2} prototype toilets
+          </p>
+
+          <p>
+            Average THI: {
+              Math.round(
+                data
+                  .filter(t=>t.buildingId===building.id)
+                  .reduce((s,t)=>s+t.thiScore,0)/
+                (building.floors*2)
+              )
+            }
+          </p>
+
+          <label>
+            Floor
+            <select
+              value={floor}
+              onChange={e=>setFloor(e.target.value)}
+            >
+              <option value="all">All Floors</option>
+
+              {Array.from(
+                {length:building.floors},
+                (_,i)=>(
+                  <option key={i} value={i+1}>
+                    Floor {i+1}
+                  </option>
+                )
+              )}
+
+            </select>
+          </label>
+
+          <div>
+            {toiletsForBuilding.map(t=>(
+              <button
+                key={t.id}
+                onClick={()=>nav(
+                  authority
+                  ? `/authority/toilet/${t.id}`
+                  : `/toilet/${t.id}`
+                )}
+              >
+                <StatusBadge score={t.thiScore}/>
+                Floor {t.floor} · Toilet {t.toiletNumber}
+              </button>
+            ))}
+          </div>
+
+        </aside>
+      )}
+
+    </section>
+  );
+}
 function MapPanel(){return <CampusMap/>}
 function Sidebar(){return <aside className="sidebar"><Link className="brand" to="/"><span><Toilet size={20}/></span> ToiLens</Link><p>Citizen portal</p><nav><Link to="/" className="nav-active"><Toilet/>Nearby toilets</Link><Link to="/report"><FileText/>Report an issue</Link></nav><div className="sidebar-note"><ShieldCheck/><strong>Better public sanitation, together.</strong><span>Every report helps keep facilities ready.</span></div></aside>}
 function BottomNavigation(){return <nav className="bottom-nav"><Link to="/" className="active"><Toilet/><span>Nearby</span></Link><Link to="/report"><CircleAlert/><span>Report</span></Link><a href="#profile"><Menu/><span>More</span></a></nav>}
