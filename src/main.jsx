@@ -288,12 +288,113 @@ function CampusMap({authority=false}){
   );
 }
 function MapPanel(){return <CampusMap/>}
-function Sidebar(){return <aside className="sidebar"><Link className="brand" to="/"><span><Toilet size={20}/></span> ToiLens</Link><p>Citizen portal</p><nav><Link to="/" className="nav-active"><Toilet/>Nearby toilets</Link><Link to="/report"><FileText/>Report an issue</Link></nav><div className="sidebar-note"><ShieldCheck/><strong>Better public sanitation, together.</strong><span>Every report helps keep facilities ready.</span></div></aside>}
+function Sidebar(){
+  return (
+    <aside className="sidebar">
+      <Link className="brand" to="/">
+       <span><img src="/src/toilens-logo.png" alt="ToiLens" /></span>
+      </Link>
+
+      <p>Citizen portal</p>
+
+      <nav>
+        <Link to="/" className="nav-active">
+          <Toilet/>Nearby toilets
+        </Link>
+
+        <Link to="/report">
+          <FileText/>Report an issue
+        </Link>
+      </nav>
+
+      <div className="sidebar-note">
+        <ShieldCheck/>
+        <strong>Better public sanitation, together.</strong>
+        <span>Every report helps keep facilities ready.</span>
+      </div>
+    </aside>
+  );
+}
 function BottomNavigation(){return <nav className="bottom-nav"><Link to="/" className="active"><Toilet/><span>Nearby</span></Link><Link to="/report"><CircleAlert/><span>Report</span></Link><a href="#profile"><Menu/><span>More</span></a></nav>}
 function Modal({children}) {return <div className="modal-backdrop"><div className="modal">{children}</div></div>}
 function Toast(){const {toast}=useApp();return toast?<div className="toast"><CheckCircle2/> {toast}</div>:null}
 function ToiletRow({toilet}){return <Link to={`/toilet/${toilet.id}`} className="toilet-row"><div className={`mini-score ${status(toilet.thiScore)}`}>{toilet.thiScore}</div><div className="toilet-info"><strong>{toilet.name}</strong><span><MapPin size={13}/>{toilet.distance} · {toilet.location}</span><AccessibilityBadge active={toilet.accessibility}/></div><div className="row-end"><StatusBadge score={toilet.thiScore}/><ChevronRight/></div></Link>}
-function Home(){const {data}=useApp();const [query,setQuery]=useState('');const [tab,setTab]=useState('Nearby');const visible=data.filter(t=>t.name.toLowerCase().includes(query.toLowerCase())).slice(0,tab==='Nearby'?4:8);return <Layout><main><header className="welcome"><div><p className="eyebrow">GOOD MORNING</p><h1>Find a cleaner toilet,<br/><em>before you need it.</em></h1></div><span className="profile">AK</span></header><THICard toilet={data[0]}/><section id="nearby" className="nearby"><div className="section-head"><div><p className="eyebrow">AROUND YOU</p><h2>Nearby toilets</h2></div><button className="link-button" onClick={()=>setTab('All toilets')}>View all</button></div><div className="search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search campus building or toilet"/></div><Tabs active={tab} setActive={setTab}/><MapPanel/><div className="toilet-list">{visible.map(t=><ToiletRow toilet={t} key={t.id}/>)}</div></section></main></Layout>}
+function Home(){
+  const {data}=useApp();
+  const [query,setQuery]=useState('');
+  const [tab,setTab]=useState('Nearby');
+
+  const visible=data
+    .filter(t=>
+      t.name.toLowerCase().includes(query.toLowerCase()) ||
+      t.buildingName.toLowerCase().includes(query.toLowerCase())
+    )
+    .slice(0,tab==='Nearby'?4:8);
+
+  return (
+    <Layout>
+      <main>
+        <header className="welcome">
+          <div>
+            <p className="eyebrow">VIT VELLORE</p>
+            <h1>
+              Find a cleaner toilet
+              <br/>
+              <em>when you need one.</em>
+            </h1>
+          </div>
+
+          <span className="profile">AK</span>
+        </header>
+
+        <THICard toilet={data[0]}/>
+
+        <section id="nearby" className="nearby">
+
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">CAMPUS</p>
+              <h2>Nearby toilets</h2>
+            </div>
+
+            <button
+              className="link-button"
+              onClick={()=>setTab('All toilets')}
+            >
+              View all
+            </button>
+          </div>
+
+          <div className="search">
+            <Search size={18}/>
+            <input
+              value={query}
+              onChange={e=>setQuery(e.target.value)}
+              placeholder="Search building or toilet"
+            />
+          </div>
+
+          <Tabs
+            active={tab}
+            setActive={setTab}
+          />
+
+          <MapPanel/>
+
+          <div className="toilet-list">
+            {visible.map(t=>(
+              <ToiletRow
+                toilet={t}
+                key={t.id}
+              />
+            ))}
+          </div>
+
+        </section>
+      </main>
+    </Layout>
+  );
+}
 function Detail(){const {data}=useApp();const id=location.pathname.split('/').pop();const toilet=data.find(t=>t.id===id)||data[0];return <Layout><main><Link className="back" to="/">← Nearby toilets</Link><header className="detail-header"><div><p className="eyebrow">{toilet.zone} · {toilet.id}</p><h1>{toilet.name}</h1><p className="muted"><MapPin size={15}/>{toilet.location}</p></div><StatusBadge score={toilet.thiScore}/></header><THICard toilet={toilet}/><div className="details-grid"><PriorityCard toilet={toilet}/><ComplaintCard toilet={toilet}/><MetricCard icon={Footprints} label="Footfall today" value={toilet.footfall} detail="visitors"/><MetricCard icon={Wrench} label="Last cleaned" value={toilet.lastCleaned}/></div><SLAProgress toilet={toilet}/><div className="chart-grid"><FootfallChart toilet={toilet}/><THIChart toilet={toilet}/></div><Link to={`/report?toilet=${toilet.id}`}><Button><CircleAlert size={18}/> Report an issue here</Button></Link></main></Layout>}
 function Report(){const {data,report}=useApp();const nav=useNavigate();const params=new URLSearchParams(location.search);const initial=data.find(t=>t.id===params.get('toilet'))||data[0];const [toilet,setToilet]=useState(initial.id);const [step,setStep]=useState(1);const [issue,setIssue]=useState('');const [rating,setRating]=useState(0);const [ticket,setTicket]=useState('');const submit=()=>{setTicket(report(toilet,issue));setStep(3)};const facility=data.find(t=>t.id===toilet);return <Modal>{step<3&&<button className="close" onClick={()=>nav(-1)}><X/></button>}{step===1&&<><p className="eyebrow">QUICK REPORT · 1 OF 2</p><h2>What needs attention?</h2><p className="muted">Your report is shared with the facility team.</p><label className="select-label">Facility<select value={toilet} onChange={e=>setToilet(e.target.value)}>{data.map(t=><option value={t.id} key={t.id}>{t.name}</option>)}</select></label><div className="issue-grid">{[['Cleanliness',Sparkles],['Water',Droplets],['Blockage',AlertTriangle],['Electricity',CircleAlert],['Waste',Toilet],['Infrastructure',Wrench]].map(([x,Icon])=><button className={issue===x?'chosen':''} onClick={()=>setIssue(x)} key={x}><Icon/><span>{x}</span></button>)}</div><Button disabled={!issue} onClick={()=>setStep(2)}>Continue <ArrowRight size={18}/></Button></>}{step===2&&<><p className="eyebrow">QUICK REPORT · 2 OF 2</p><h2>Add a little detail</h2><p className="muted">A photo and rating help us assess this faster.</p><label className="photo"><input type="file" accept="image/png,image/jpeg"/><Camera/><strong>Add photo</strong><span>Optional · JPG or PNG</span></label><div className="rating"><strong>How would you rate this facility?</strong><div>{[1,2,3,4,5].map(i=><button className={i<=rating?'rated':''} onClick={()=>setRating(i)} key={i}><Star fill={i<=rating?'currentColor':'none'}/></button>)}</div></div><div className="report-actions"><Button variant="secondary" onClick={()=>setStep(1)}>Back</Button><Button onClick={submit}>Submit report <ArrowRight size={18}/></Button></div></>}{step===3&&<div className="success"><div className="success-icon"><CheckCircle2/></div><p className="eyebrow">REPORT RECEIVED</p><h2>Thank you for helping.</h2><p>Your ticket <strong>{ticket}</strong> has been sent to the facility team.</p><div className="resolution"><span>Expected resolution</span><strong>{facility.slaStatus==='Breached'?'Within 1 hour':'Within 3 hours'}</strong><small>Based on the current service SLA</small></div><Button onClick={()=>nav(`/toilet/${toilet}`)}>View facility status</Button><button className="text-btn" onClick={()=>nav('/')}>Back to nearby toilets</button></div>}</Modal>}
 function AuthoritySidebar(){return <aside className="authority-sidebar"><Link className="brand" to="/authority"><span><Toilet size={20}/></span> ToiLens</Link><p>Authority command center</p><nav><Link to="/authority"><LayoutDashboard/>Overview</Link><Link to="/authority/map"><Map/>Health map</Link><Link to="/authority/complaints"><CircleAlert/>AI complaint inbox</Link><Link to="/authority/accessibility"><ShieldCheck/>Accessibility</Link></nav><div className="switch-view"><Link to="/"><Navigation/>Open citizen view</Link></div></aside>}

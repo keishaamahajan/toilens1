@@ -20,3 +20,742 @@
 
 
 
+/* =========================================================
+   TOILENS — UI REDESIGN
+   Visual changes only. Existing functionality stays intact.
+   ========================================================= */
+
+:root {
+  --ink: #17231c;
+  --muted: #68736c;
+  --line: #dfe5df;
+  --bg: #f5f7f4;
+  --green: #245b3a;
+  --mint: #e8f0e9;
+  --saffron: #c8892d;
+  --red: #c94b3f;
+}
+
+/* Overall page */
+body {
+  background: #f5f7f4;
+  color: #17231c;
+}
+
+/* Main content */
+.page main {
+  width: min(1040px, 100%);
+  padding: 38px 34px 70px;
+}
+
+/* Cleaner headings */
+.welcome h1,
+.detail-header h1 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.welcome em {
+  color: var(--green);
+}
+
+/* Remove excessive dashboard-card feeling */
+.thi-card {
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #dfe5df;
+  padding: 22px;
+}
+
+.priority-card,
+.complaint-card,
+.metric,
+.sla,
+.chart-card,
+.toilet-row {
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+/* Buttons feel more like a real campus application */
+.button {
+  border-radius: 6px;
+  background: var(--green);
+  box-shadow: none;
+}
+
+.button:hover:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+  background: #1d4d31;
+}
+
+.button.secondary {
+  background: #fff;
+  border-color: #cbd5cd;
+}
+
+/* Navigation */
+.sidebar {
+  width: 225px;
+  background: #ffffff;
+  border-right: 1px solid #dfe5df;
+  padding: 25px 16px;
+}
+
+.sidebar nav a {
+  border-radius: 6px;
+}
+
+.sidebar .nav-active {
+  background: #e8f0e9;
+  color: var(--green);
+}
+
+/* Campus map */
+.campus-map-shell {
+  margin-top: 20px;
+}
+
+.campus-map-toolbar {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.campus-map-toolbar > b {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.campus-map-toolbar input {
+  width: 250px;
+}
+
+.campus-map {
+  height: 500px;
+  border-radius: 7px;
+  border: 1px solid #ccd8ce;
+  background-color: #eef3ed;
+  background-image: none;
+}
+
+/* Map legend */
+.map-legend {
+  border: 1px solid #dfe5df;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+/* Building information panel */
+.campus-building-card {
+  border-radius: 6px;
+  box-shadow: 0 4px 14px #173b2918;
+  width: 270px;
+}
+
+.campus-building-card h3 {
+  color: #17231c;
+  font-weight: 600;
+}
+
+.campus-building-card > div button {
+  border-radius: 4px;
+}
+
+/* Cleanest result */
+.cleanest {
+  background: #e8f0e9;
+  border-radius: 5px;
+  color: var(--green);
+}
+
+/* Status badges */
+.badge {
+  border-radius: 5px;
+}
+
+.badge.good {
+  background: #e7f1e9;
+  color: #287044;
+}
+
+.badge.watch {
+  background: #fff3df;
+  color: #9b681e;
+}
+
+.badge.alert {
+  background: #fae8e5;
+  color: #ad4037;
+}
+
+/* Toilet list */
+.toilet-row {
+  padding: 13px;
+  background: #fff;
+}
+
+.toilet-row:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: #b8c8bc;
+}
+
+/* Search */
+.search {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+/* Cards and sections */
+.section-head h2 {
+  font-weight: 600;
+}
+
+.map-panel {
+  border-radius: 7px;
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+  .page main {
+    padding: 24px 16px 85px;
+  }
+
+  .campus-map {
+    height: 430px;
+  }
+
+  .campus-building-card {
+    width: calc(100% - 26px);
+    right: 13px;
+    top: auto;
+    bottom: 13px;
+  }
+}
+
+/* ===== TOILENS FIGMA VISUAL TEST ===== */
+
+body {
+  background: #f3f5f2 !important;
+}
+
+.page main {
+  max-width: 1100px !important;
+}
+
+/* Make the main map the visual focus */
+.campus-map-shell {
+  margin-top: 28px !important;
+}
+
+.campus-map-toolbar {
+  background: #ffffff !important;
+  padding: 14px 16px !important;
+  border: 1px solid #d9e1da !important;
+  border-radius: 6px !important;
+}
+
+.campus-map {
+  height: 560px !important;
+  border-radius: 6px !important;
+  border: 1px solid #cbd7ce !important;
+}
+
+/* Less rounded, more civic/campus */
+.thi-card,
+.priority-card,
+.complaint-card,
+.metric,
+.sla,
+.chart-card,
+.toilet-row,
+.map-panel {
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+
+/* Stronger VIT-style green */
+.button {
+  background: #245b3a !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+.button:hover {
+  background: #1b472d !important;
+}
+
+/* Navigation */
+.sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #d9e1da !important;
+}
+
+.sidebar .nav-active {
+  background: #e7efe8 !important;
+  color: #245b3a !important;
+}
+
+/* Search */
+.search,
+.campus-map-toolbar input {
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+/* Building panel */
+.campus-building-card {
+  border-radius: 6px !important;
+  box-shadow: 0 3px 12px rgba(20,50,30,.12) !important;
+}
+
+/* Headings */
+.welcome h1,
+.detail-header h1 {
+  font-weight: 600 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* Remove gradient-looking effects */
+* {
+  background-image: none;
+}
+
+/* ===== FIGMA MAP SCREEN ===== */
+
+.campus-map-shell {
+  margin: 0 !important;
+}
+
+/* Map toolbar */
+.campus-map-toolbar {
+  background: #172b4d !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 14px 18px !important;
+}
+
+.campus-map-toolbar label {
+  color: #d9e2ef !important;
+}
+
+.campus-map-toolbar select {
+  background: #ffffff !important;
+  color: #172b4d !important;
+  border: none !important;
+  border-radius: 4px !important;
+}
+
+.campus-map-toolbar > b {
+  color: #ffffff !important;
+}
+
+/* Search area */
+.campus-map-toolbar > div {
+  margin-left: auto !important;
+}
+
+.campus-map-toolbar input {
+  background: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  color: #172b4d !important;
+  height: 38px !important;
+}
+
+.campus-map-toolbar button {
+  background: #ffffff !important;
+  color: #172b4d !important;
+  border-radius: 4px !important;
+}
+
+/* Prototype information */
+.map-prototype-note {
+  margin: 0 !important;
+  padding: 9px 18px !important;
+  background: #ffffff !important;
+  color: #64748b !important;
+  border-bottom: 1px solid #d9e1ea !important;
+}
+
+/* Map */
+.campus-map {
+  height: 560px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Legend */
+.map-legend {
+  background: #172b4d !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.map-legend span {
+  color: white !important;
+}
+
+/* Cleanest button */
+.cleanest {
+  margin-top: 10px !important;
+  background: #ffffff !important;
+  color: #245b3a !important;
+  border: 1px solid #ccd8ce !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+/* Building card */
+.campus-building-card {
+  border-radius: 5px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.16) !important;
+}
+
+/* Leaflet popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 5px !important;
+}
+
+.leaflet-popup-content {
+  font-family: "DM Sans", sans-serif !important;
+}
+
+/* ===== CLEANER CAMPUS BUILDING PINS ===== */
+
+.custom-building-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-building-marker > div {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #172b4d;
+  color: white;
+
+  border: 3px solid white;
+  border-radius: 50%;
+
+  font-size: 15px;
+  line-height: 1;
+
+  box-shadow: 0 2px 7px rgba(0,0,0,.25);
+}
+
+/* =========================================
+   TOILENS — NEW COLOUR PALETTE
+   ========================================= */
+
+:root {
+  --ink: #6c6062;
+  --muted: #81777a;
+  --line: #ddd9dc;
+  --bg: #f7f5f6;
+
+  --green: #9886a0;
+  --mint: #cbc6d8;
+
+  --saffron: #c9b6af;
+  --red: #9a7378;
+
+  --sage: #c1c3ad;
+}
+
+/* Page */
+body {
+  background: #f7f5f6 !important;
+  color: #6c6062 !important;
+}
+
+/* Primary buttons */
+.button {
+  background: #9886a0 !important;
+  color: #ffffff !important;
+}
+
+.button:hover:not(:disabled) {
+  background: #806d89 !important;
+}
+
+/* Active navigation */
+.sidebar .nav-active {
+  background: #cbc6d8 !important;
+  color: #6c6062 !important;
+}
+
+/* Navigation icon/text */
+.sidebar nav a {
+  color: #6c6062;
+}
+
+.sidebar nav a:hover {
+  background: #f0edf2;
+}
+
+/* Headings */
+.welcome h1,
+.detail-header h1,
+.section-head h2,
+.campus-building-card h3 {
+  color: #6c6062 !important;
+}
+
+.welcome em {
+  color: #9886a0 !important;
+}
+
+/* Eyebrow text */
+.eyebrow {
+  color: #9886a0 !important;
+}
+
+/* Search */
+.search,
+.campus-map-toolbar input {
+  border-color: #ddd9dc !important;
+}
+
+.search:focus-within {
+  border-color: #9886a0 !important;
+}
+
+/* Map toolbar */
+.campus-map-toolbar {
+  background: #6c6062 !important;
+}
+
+.campus-map-toolbar > b {
+  color: #cbc6d8 !important;
+}
+
+/* Cleanest button */
+.cleanest {
+  background: #cbc6d8 !important;
+  color: #6c6062 !important;
+  border-color: #9886a0 !important;
+}
+
+/* Selected building */
+.campus-building-card {
+  border-color: #cbc6d8 !important;
+}
+
+.campus-building-card h3 {
+  color: #6c6062 !important;
+}
+
+/* Building pins */
+.custom-building-marker > div {
+  background: #6c6062 !important;
+  border-color: #ffffff !important;
+}
+
+/* Map legend */
+.map-legend {
+  background: #6c6062 !important;
+}
+
+/* Good status */
+.badge.good {
+  background: #e5e6d9 !important;
+  color: #59604a !important;
+}
+
+/* Needs attention */
+.badge.watch {
+  background: #eee8e4 !important;
+  color: #80665d !important;
+}
+
+/* Cleaning required */
+.badge.alert {
+  background: #eadcdf !important;
+  color: #805c63 !important;
+}
+
+/* Cards */
+.thi-card,
+.priority-card,
+.complaint-card,
+.metric,
+.sla,
+.chart-card,
+.toilet-row {
+  border-color: #ddd9dc !important;
+  box-shadow: none !important;
+}
+
+/* =========================================
+   TOILENS — FINAL COLOUR PALETTE
+   ========================================= */
+
+:root {
+  --ink: #4b5563;
+  --muted: #6b7280;
+  --line: #e5e4e2;
+  --bg: #fefdf8;
+
+  --green: #84a98c;
+  --mint: #eef4ef;
+
+  --saffron: #d4a017;
+  --red: #b85c5c;
+}
+
+/* Main background */
+body {
+  background: #fefdf8 !important;
+  color: #4b5563 !important;
+}
+
+/* Main content */
+.page main {
+  background: #fefdf8 !important;
+}
+
+/* Headings */
+.welcome h1,
+.detail-header h1,
+.section-head h2,
+.campus-building-card h3 {
+  color: #4b5563 !important;
+}
+
+/* Green accent */
+.welcome em,
+.eyebrow {
+  color: #84a98c !important;
+}
+
+/* Primary buttons */
+.button {
+  background: #84a98c !important;
+  color: #ffffff !important;
+  border-color: #84a98c !important;
+}
+
+.button:hover:not(:disabled) {
+  background: #709879 !important;
+}
+
+/* Navigation */
+.sidebar {
+  background: #fefdf8 !important;
+  border-color: #e5e4e2 !important;
+}
+
+.sidebar nav a {
+  color: #4b5563 !important;
+}
+
+.sidebar .nav-active {
+  background: #eef4ef !important;
+  color: #84a98c !important;
+}
+
+/* Search */
+.search {
+  background: #ffffff !important;
+  border-color: #e5e4e2 !important;
+}
+
+.search:focus-within {
+  border-color: #84a98c !important;
+}
+
+/* Cards */
+.thi-card,
+.priority-card,
+.complaint-card,
+.metric,
+.sla,
+.chart-card,
+.toilet-row {
+  background: #ffffff !important;
+  border-color: #e5e4e2 !important;
+}
+
+/* Map toolbar */
+.campus-map-toolbar {
+  background: #4b5563 !important;
+}
+
+.campus-map-toolbar > b {
+  color: #ffffff !important;
+}
+
+/* Map information */
+.map-prototype-note {
+  background: #fefdf8 !important;
+  color: #6b7280 !important;
+  border-color: #e5e4e2 !important;
+}
+
+/* Building pins */
+.custom-building-marker > div {
+  background: #84a98c !important;
+  color: #ffffff !important;
+}
+
+/* Cleanest nearby */
+.cleanest {
+  background: #eef4ef !important;
+  color: #4b5563 !important;
+  border-color: #84a98c !important;
+}
+
+/* Map legend */
+.map-legend {
+  background: #4b5563 !important;
+}
+
+/* Status colours */
+.badge.good {
+  background: #eef4ef !important;
+  color: #52755b !important;
+}
+
+.badge.watch {
+  background: #fff5d9 !important;
+  color: #946f0c !important;
+}
+
+.badge.alert {
+  background: #f5e4e4 !important;
+  color: #9b4f4f !important;
+}
+
+/* Selected building */
+.campus-building-card {
+  background: #ffffff !important;
+  border-color: #e5e4e2 !important;
+}
+
+/* Links */
+.link-button {
+  color: #84a98c !important;
+}
+
+/* Borders */
+.section-head,
+.toilet-row {
+  border-color: #e5e4e2 !important;
+}
+
+/* Gold accent where appropriate */
+.saffron,
+.accent-gold {
+  color: #d4a017 !important;
+}
+
