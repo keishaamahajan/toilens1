@@ -1,0 +1,36 @@
+{
+  "locations": [
+    {
+      "id": "1",
+      "name": "Main Building",
+      "category": "Academic",
+      "lat": 12.9692,
+      "lng": 79.1559,
+      "description": "Administrative offices and classrooms"
+    },
+    {
+      "id": "2",
+      "name": "Central Library",
+      "category": "Facility",
+      "lat": 12.9701,
+      "lng": 79.1565,
+      "description": "Books, study rooms, and computers"
+    },
+    {
+      "id": "3",
+      "name": "Food Court",
+      "category": "Dining",
+      "lat": 12.9715,
+      "lng": 79.1578,
+      "description": "Cafes and restaurants"
+    }
+  ],
+  "routes": [
+    {
+      "id": "1",
+      "from": "Main Building",
+      "to": "Central Library",
+      "distanceMeters": 150
+    }
+  ]
+}
